@@ -7,16 +7,15 @@ router.get('/', (req, res) => {
 res.status(200).send(res.body)
 });
 
-router.post('/', (req, res) => {
-  // let document = new Document({
-  //   year: req.body.year
-  //   // ,
-  //   // month: req.body.month,
-  //   // name: req.body.name,
-  //   // SIRET: req.body.SIRET
-  // });
-  // document = await document.save();
-  res.send(req);
+router.post('/', async (req, res) => {
+  let document = new Document({
+    year: req.body.year,
+    month: req.body.month,
+    name: req.body.name,
+    SIRET: req.body.SIRET
+  });
+  document = await document.save();
+  res.send(document);
 });
 
 module.exports = router;

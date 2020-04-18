@@ -32,16 +32,26 @@ describe('GET /api/documents', () => {
   });
 
   afterEach(async () => {
-    await Document.remove({});
     await server.close();
+    await Document.remove({});
   });
 
+
   it('should return a 200', async () => {
+
+    const document = {
+      year: '12345',
+      month: '12345',
+      name: '12345',
+      SIRET: '12345'
+    }
+
+    await Document.collection.insertOne(document);
 
     const res = await request(server).get('/api/documents');
 
     expect(res.status).toBe(200);
-    expect(res.body.length).toBe(1 );
+    expect(res.body).toHaveProperty('year');
     // expect(res.body.some(g => g.name === '12345')).toBeTruthy();
     // expect(res.body.some(g => g.name === 'genre2')).toBeTruthy();
   });

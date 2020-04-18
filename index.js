@@ -14,3 +14,5 @@ const server = app.listen(port, () => {
 });
 
 module.exports = server;
+
+// console.log(process.env.PORT)

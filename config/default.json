@@ -1,3 +1,4 @@
 {
-  "db": "mongodb://localhost/ppl"
+  "db": "mongodb://localhost/ppl",
+  "port": 3200
 }
