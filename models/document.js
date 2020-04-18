@@ -43,7 +43,7 @@ const documentSchema = new mongoose.Schema({
     type: Number,
     required: true
   }
-})
+});
 
 const Document = mongoose.model('Document', documentSchema);
 
@@ -64,4 +64,4 @@ const validateDocument = (document) => {
 };
 
 exports.Document = Document;
-exports.validate = validateDocument;
+exports.validateDocument = validateDocument;

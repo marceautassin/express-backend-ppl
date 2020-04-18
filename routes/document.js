@@ -1,9 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
-const {Document, validate} = require('../models/document');
+const {
+  Document,
+  validateDocument
+} = require('../models/document');
 const validateObjectId = require('../middleware/validateObjectId');
 const auth = require('../middleware/auth');
+const validate = require('../middleware/validate');
 
 router.get('/', async (req, res) => {
 const result = await Document.find();
@@ -18,9 +22,9 @@ if(!document) return res.status(404).send('This document does not exist');
 res.send(document);
 });
 
-router.post('/', auth, async (req, res) => {
-  const { error } = validate(req.body);
-  if(error) return res.status(400).send(error.details[0].message);
+router.post('/', [auth, validate(validateDocument)], async (req, res) => {
+  // const { error } = validate(req.body);
+  // if(error) return res.status(400).send(error.details[0].message);
 
   let document = new Document({
     year: req.body.year,
@@ -37,6 +41,10 @@ router.post('/', auth, async (req, res) => {
 
   document = await document.save();
   res.send(document);
+});
+
+router.put('/:id',[auth, validateObjectId, validate(validateDocument)], async (req, res) => {
+
 });
 
 module.exports = router;

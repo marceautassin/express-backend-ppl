@@ -119,7 +119,7 @@ describe('GET /api/documents/:id', () => {
 describe('POST /', () => {
   let server;
   let token;
-  let year
+  let year;
 
   const exec = () => {
     return request(server)
@@ -137,7 +137,7 @@ describe('POST /', () => {
         conge_n: 1,
         rtt: 1
       });
-  }
+  };
 
   beforeEach(() => {
     server = require('../../index');
@@ -145,7 +145,7 @@ describe('POST /', () => {
     year = "2020";
   });
 
-  afterEach( async () => {
+  afterEach(async () => {
     await server.close();
     await Document.remove({});
   });
@@ -161,6 +161,100 @@ describe('POST /', () => {
 
   it('should return 400 if one of the field is missing', async () => {
     year = '';
+
+    const res = await exec();
+
+    expect(res.status).toBe(400);
+  });
+  it('should return 400 if one of the field is wrong', async () => {
+    year = 2020;
+
+    const res = await exec();
+
+    expect(res.status).toBe(400);
+  });
+
+  it('should save the document if it is valid', async () => {
+    await exec();
+
+    const document = await Document.find({
+      name: 'document'
+    });
+
+    expect(document).not.toBeNull();
+  });
+
+  it('should return the document if it is valid', async () => {
+    const res = await exec();
+
+    expect(res.status).toBe(200);
+    expect(res.body).toHaveProperty('_id');
+    expect(res.body).toHaveProperty('name', 'document');
+  });
+});
+
+describe('PUT /', () => {
+  let server;
+  let token;
+  let year;
+  let id;
+  let newName;
+
+  const exec = () => {
+    return request(server)
+      .put('/api/documents/' + id)
+      .set('x-auth-token', token)
+      .send({
+        name: newName
+      });
+  };
+
+  beforeEach(async () => {
+    server = require('../../index');
+    token = new User().generateAuthToken();
+    year = "2020";
+
+    document = new Document({
+      year: year,
+      month: '12345',
+      name: '12345',
+      SIRET: '12345',
+      salaire_brut: 12345,
+      salaire_net_paye: 12345,
+      impot_revenu: 12345,
+      conge_n_1: 12345,
+      conge_n: 12345,
+      rtt: 12345
+    });
+    await document.save();
+
+    id = document._id;
+    newName = "updatedDocument";
+  });
+
+  afterEach(async () => {
+    await server.close();
+    await Document.remove({});
+  });
+
+
+  it('should return 401 if client is not logged in', async () => {
+    token = '';
+
+    const res = await exec();
+
+    expect(res.status).toBe(401);
+  });
+
+  it('should return 400 if one of the field is missing', async () => {
+    year = '';
+
+    const res = await exec();
+
+    expect(res.status).toBe(400);
+  });
+  it('should return 400 if one of the field is wrong', async () => {
+    year = 2020;
 
     const res = await exec();
 
