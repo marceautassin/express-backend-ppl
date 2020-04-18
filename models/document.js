@@ -53,7 +53,12 @@ const validateDocument = (document) => {
     month: Joi.string().required(),
     name: Joi.string().required(),
     SIRET: Joi.string().required(),
-    doc_line: Joi.objectId().required()
+    salaire_brut: Joi.number().required(),
+    salaire_net_paye: Joi.number().required(),
+    impot_revenu: Joi.number().required(),
+    conge_n_1: Joi.number().required(),
+    conge_n: Joi.number().required(),
+    rtt: Joi.number().required(),
   };
   return Joi.validate(document, schema);
 };

@@ -2,6 +2,9 @@ const request = require('supertest');
 const {
   Document
 } = require('../../models/document');
+const {
+  User
+} = require('../../models/user');
 const mongoose = require('mongoose');
 
 describe('GET /api/documents', () => {
@@ -114,16 +117,17 @@ describe('GET /api/documents/:id', () => {
 });
 
 describe('POST /', () => {
-let server;
+  let server;
   let token;
+  let year
 
-  const exec = async () => {
-    return await request(server)
+  const exec = () => {
+    return request(server)
       .post('/api/documents')
       .set('x-auth-token', token)
       .send({
         name: 'document',
-        year: "2020",
+        year: year,
         month: "april",
         SIRET: "12345",
         salaire_brut: 1,
@@ -138,7 +142,14 @@ let server;
   beforeEach(() => {
     server = require('../../index');
     token = new User().generateAuthToken();
-  })
+    year = "2020";
+  });
+
+  afterEach( async () => {
+    await server.close();
+    await Document.remove({});
+  });
+
 
   it('should return 401 if client is not logged in', async () => {
     token = '';
@@ -148,7 +159,15 @@ let server;
     expect(res.status).toBe(401);
   });
 
-  it('should save the genre if it is valid', async () => {
+  it('should return 400 if one of the field is missing', async () => {
+    year = '';
+
+    const res = await exec();
+
+    expect(res.status).toBe(400);
+  });
+
+  it('should save the document if it is valid', async () => {
     await exec();
 
     const document = await Document.find({
@@ -158,10 +177,11 @@ let server;
     expect(document).not.toBeNull();
   });
 
-  it('should return the genre if it is valid', async () => {
+  it('should return the document if it is valid', async () => {
     const res = await exec();
 
+    expect(res.status).toBe(200);
     expect(res.body).toHaveProperty('_id');
-    expect(res.body).toHaveProperty('name', 'gdocument');
+    expect(res.body).toHaveProperty('name', 'document');
   });
 });

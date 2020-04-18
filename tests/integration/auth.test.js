@@ -13,8 +13,8 @@ describe('auth middleware', () => {
     token = new User().generateAuthToken();
   });
   afterEach(async () => {
-    await Document.remove({});
     await server.close();
+    await Document.remove({});
   });
 
   let token;
