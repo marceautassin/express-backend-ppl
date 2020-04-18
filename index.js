@@ -5,6 +5,7 @@ const winston = require('winston')
 
 require('./startup/db')();
 require('./startup/logging')();
+require('./startup/routes')(app);
 
 
 const port = process.env.PORT || 3000;
