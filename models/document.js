@@ -1,9 +1,6 @@
 const Joi = require('joi');
 const mongoose = require('mongoose');
 Joi.objectId = require('joi-objectid')(Joi);
-const {
-  doclineSchema
-} = require('./doc_line');
 
 const documentSchema = new mongoose.Schema({
   year: {
@@ -22,8 +19,28 @@ const documentSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  doc_line: {
-    type: doclineSchema,
+  salaire_brut: {
+    type: Number,
+    required: true
+  },
+  salaire_net_paye: {
+    type: Number,
+    required: true
+  },
+  impot_revenu: {
+    type: Number,
+    required: true
+  },
+  conge_n_1: {
+    type: Number,
+    required: true
+  },
+  conge_n: {
+    type: Number,
+    required: true
+  },
+  rtt: {
+    type: Number,
     required: true
   }
 })

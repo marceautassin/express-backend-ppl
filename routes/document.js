@@ -18,14 +18,7 @@ res.send(document);
 });
 
 router.post('/', async (req, res) => {
-  let document = new Document({
-    year: req.body.year,
-    month: req.body.month,
-    name: req.body.name,
-    SIRET: req.body.SIRET
-  });
-  document = await document.save();
-  res.send(document);
+
 });
 
 module.exports = router;
