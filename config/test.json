@@ -1,4 +1,5 @@
 {
+  "jwtPrivateKey": "12345",
   "db": "mongodb://localhost/ppl_test",
   "port": 3000
 }
