@@ -21,12 +21,11 @@ const documentSchema = new mongoose.Schema({
   SIRET: {
     type: String,
     required: true
+  },
+  doc_line: {
+    type: doclineSchema,
+    required: true
   }
-  // ,
-  // doc_line: {
-  //   type: doclineSchema,
-  //   require: true
-  // }
 })
 
 const Document = mongoose.model('Document', documentSchema);
@@ -37,7 +36,7 @@ const validateDocument = (document) => {
     month: Joi.string().required(),
     name: Joi.string().required(),
     SIRET: Joi.string().required(),
-    // doc_line: Joi.objectId().required()
+    doc_line: Joi.objectId().required()
   };
   return Joi.validate(document, schema);
 };
