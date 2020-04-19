@@ -47,8 +47,8 @@ describe('GET /api/documents', () => {
 
 
   afterEach(async () => {
-    await server.close();
     await Document.remove({});
+    await server.close();
   });
 
 
@@ -90,8 +90,8 @@ describe('GET /api/documents/:id', () => {
 
 
   afterEach(async () => {
-    await server.close();
     await Document.remove({});
+    await server.close();
   });
 
 
@@ -146,8 +146,8 @@ describe('POST /', () => {
   });
 
   afterEach(async () => {
-    await server.close();
     await Document.remove({});
+    await server.close();
   });
 
 
@@ -193,19 +193,29 @@ describe('POST /', () => {
   });
 });
 
-describe('PUT /', () => {
+describe('PUT /:id', () => {
   let server;
   let token;
   let year;
   let id;
   let newName;
+  let doc;
 
   const exec = () => {
     return request(server)
       .put('/api/documents/' + id)
       .set('x-auth-token', token)
       .send({
-        name: newName
+        name: newName,
+        year: year,
+        month: '12345',
+        SIRET: '12345',
+        salaire_brut: 12345,
+        salaire_net_paye: 12345,
+        impot_revenu: 12345,
+        conge_n_1: 12345,
+        conge_n: 12345,
+        rtt: 12345
       });
   };
 
@@ -214,7 +224,7 @@ describe('PUT /', () => {
     token = new User().generateAuthToken();
     year = "2020";
 
-    document = new Document({
+    doc = new Document({
       year: year,
       month: '12345',
       name: '12345',
@@ -226,15 +236,15 @@ describe('PUT /', () => {
       conge_n: 12345,
       rtt: 12345
     });
-    await document.save();
+    await doc.save();
 
-    id = document._id;
+    id = doc._id;
     newName = "updatedDocument";
   });
 
   afterEach(async () => {
-    await server.close();
     await Document.remove({});
+    await server.close();
   });
 
 
@@ -261,14 +271,27 @@ describe('PUT /', () => {
     expect(res.status).toBe(400);
   });
 
-  it('should save the document if it is valid', async () => {
+  it('should return 404 if invalid id is passed', async () => {
+    id = 1;
+
+    const res = await exec();
+
+    expect(res.status).toBe(404);
+  });
+
+  it('should return 404 if no document with the given id', async () => {
+    id = mongoose.Types.ObjectId();
+    const res = await exec();
+
+    expect(res.status).toBe(404);
+  });
+
+  it('should update the document if input is valid', async () => {
     await exec();
 
-    const document = await Document.find({
-      name: 'document'
-    });
+    const updatedDocument = await Document.findById(id);
 
-    expect(document).not.toBeNull();
+    expect(updatedDocument.name).toBe(newName);
   });
 
   it('should return the document if it is valid', async () => {
@@ -276,6 +299,85 @@ describe('PUT /', () => {
 
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty('_id');
-    expect(res.body).toHaveProperty('name', 'document');
+    expect(res.body).toHaveProperty('name', 'updatedDocument');
+  });
+});
+
+describe('DELETE /:id', () => {
+  let server;
+  let token;
+  let id;
+  let doc;
+
+  const exec = () => {
+    return request(server)
+      .delete('/api/documents/' + id)
+      .set('x-auth-token', token)
+      .send();
+  };
+
+  beforeEach(async () => {
+    server = require('../../index');
+    token = new User().generateAuthToken();
+
+    doc = new Document({
+      year: '2020',
+      month: '12345',
+      name: '12345',
+      SIRET: '12345',
+      salaire_brut: 12345,
+      salaire_net_paye: 12345,
+      impot_revenu: 12345,
+      conge_n_1: 12345,
+      conge_n: 12345,
+      rtt: 12345
+    });
+    await doc.save();
+
+    id = doc._id;
+  });
+
+  afterEach(async () => {
+    await Document.remove({});
+    await server.close();
+  });
+
+
+  it('should return 401 if client is not logged in', async () => {
+    token = '';
+
+    const res = await exec();
+
+    expect(res.status).toBe(401);
+  });
+
+  it('should return 404 if invalid id is passed', async () => {
+    id = 1;
+
+    const res = await exec();
+
+    expect(res.status).toBe(404);
+  });
+
+  it('should return 404 if no document with the given id', async () => {
+    id = mongoose.Types.ObjectId();
+    const res = await exec();
+
+    expect(res.status).toBe(404);
+  });
+
+  it('should delete the document if input is valid', async () => {
+    await exec();
+
+    const documentInDb = await Document.findById(id);
+
+    expect(documentInDb).toBeNull();
+  });
+
+  it('should return the document if it is valid', async () => {
+    const res = await exec();
+
+    expect(res.body).toHaveProperty('_id', id.toHexString());
+    expect(res.body).toHaveProperty('name', doc.name);
   });
 });

@@ -43,8 +43,31 @@ router.post('/', [auth, validate(validateDocument)], async (req, res) => {
   res.send(document);
 });
 
-router.put('/:id',[auth, validateObjectId, validate(validateDocument)], async (req, res) => {
+router.put('/:id', [auth, validateObjectId, validate(validateDocument)], async (req, res) => {
+const document = await Document.findByIdAndUpdate(req.params.id, {
+  year: req.body.year,
+  month: req.body.month,
+  name: req.body.name,
+  SIRET: req.body.SIRET,
+  salaire_brut: req.body.salaire_brut,
+  salaire_net_paye: req.body.salaire_net_paye,
+  impot_revenu: req.body.impot_revenu,
+  conge_n_1: req.body.conge_n_1,
+  conge_n: req.body.conge_n,
+  rtt: req.body.rtt
+}, {new: true});
+if(!document) return res.status(404).send('This document does not exist');
+
+res.send(document);
+});
+
+router.delete('/:id',[auth, validateObjectId], async (req, res) => {
+  const document = await Document.findByIdAndRemove(req.params.id);
+  if(!document) return res.status(404).send('This document does not exist');
+
+  res.send(document);
 
 });
 
 module.exports = router;
+
