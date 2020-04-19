@@ -21,5 +21,7 @@ describe('auth middleware', () => {
 
     expect(req.user).toBeDefined();
     expect(req.user).toMatchObject(user);
+    expect(req.userId).toBeDefined();
+    expect(req.userId).toMatch(user._id);
   });
 });

@@ -3,6 +3,10 @@ const mongoose = require('mongoose');
 Joi.objectId = require('joi-objectid')(Joi);
 
 const documentSchema = new mongoose.Schema({
+  userId: {
+    type: String,
+    required: true
+  },
   year: {
     type: String,
     required: true
@@ -52,6 +56,7 @@ const Document = mongoose.model('Document', documentSchema);
 
 const validateDocument = (document) => {
   const schema = {
+    userId: Joi.string().required(),
     year: Joi.string().required(),
     month: Joi.string().required(),
     name: Joi.string().required(),

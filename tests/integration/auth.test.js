@@ -1,4 +1,5 @@
 const request = require('supertest');
+const mongoose = require('mongoose');
 const {
   User
 } = require('../../models/user');
@@ -24,6 +25,7 @@ describe('auth middleware in routes', () => {
       .post('/api/documents')
       .set('x-auth-token', token)
       .send({
+        userId: mongoose.Types.ObjectId().toHexString(),
         name: 'document',
         year: "2020",
         month: "april",
@@ -54,11 +56,6 @@ describe('auth middleware in routes', () => {
   });
 
   it('should return 200 if token is valid', async () => {
-    const res = await exec();
-
-    expect(res.status).toBe(200);
-  });
-  it('should generate a session.userId', async () => {
     const res = await exec();
 
     expect(res.status).toBe(200);

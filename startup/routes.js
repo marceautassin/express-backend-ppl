@@ -4,7 +4,6 @@ const home = require('../routes/home');
 const documents = require('../routes/documents');
 const users = require('../routes/users');
 const auth = require('../routes/auth');
-const session = require('express-session')
 
 module.exports = function(app) {
   app.use(express.json()); //middleware function => req.body
