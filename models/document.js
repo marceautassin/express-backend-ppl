@@ -42,6 +42,9 @@ const documentSchema = new mongoose.Schema({
   rtt: {
     type: Number,
     required: true
+  },
+  test: {
+    type: Number
   }
 });
 
@@ -59,6 +62,7 @@ const validateDocument = (document) => {
     conge_n_1: Joi.number().required(),
     conge_n: Joi.number().required(),
     rtt: Joi.number().required(),
+    test: Joi.number()
   };
   return Joi.validate(document, schema);
 };

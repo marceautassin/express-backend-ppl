@@ -6,7 +6,7 @@ const {
   Document
 } = require('../../models/document');
 
-describe('auth middleware', () => {
+describe('auth middleware in routes', () => {
 
   beforeEach(() => {
     server = require('../../index');
@@ -52,6 +52,7 @@ describe('auth middleware', () => {
 
     expect(res.status).toBe(400);
   });
+
   it('should return 200 if token is valid', async () => {
     const res = await exec();
 

@@ -38,11 +38,11 @@ const validateUser = (user) => {
   const schema = {
     name: Joi.string().min(2).max(50).required(),
     email: Joi.string().email().required(),
-    password: Joi.string().required()
+    password: Joi.string().min(7).required()
   };
 
   return Joi.validate(user, schema);
 };
 
 exports.User = User;
-exports.validate = validateUser;
+exports.validateUser = validateUser;

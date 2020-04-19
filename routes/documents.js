@@ -44,7 +44,8 @@ router.post('/', [auth, validate(validateDocument)], async (req, res) => {
 });
 
 router.put('/:id', [auth, validateObjectId, validate(validateDocument)], async (req, res) => {
-const document = await Document.findByIdAndUpdate(req.params.id, {
+const document = await Document.findByIdAndUpdate(req.params.id,
+  {$set: {
   year: req.body.year,
   month: req.body.month,
   name: req.body.name,
@@ -55,7 +56,7 @@ const document = await Document.findByIdAndUpdate(req.params.id, {
   conge_n_1: req.body.conge_n_1,
   conge_n: req.body.conge_n,
   rtt: req.body.rtt
-}, {new: true});
+}}, {new: true});
 if(!document) return res.status(404).send('This document does not exist');
 
 res.send(document);
