@@ -58,4 +58,11 @@ describe('auth middleware in routes', () => {
 
     expect(res.status).toBe(200);
   });
+  it('should generate a session.userId', async () => {
+    const res = await exec();
+
+    expect(res.status).toBe(200);
+  });
 });
+
+// ajouter test pour le POST /auth

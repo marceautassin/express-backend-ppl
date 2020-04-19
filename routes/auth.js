@@ -18,7 +18,6 @@ router.use(session({
     secure: true
   }
 }));
-
 // post
 
 router.post('/', async (req, res) => {
@@ -36,6 +35,7 @@ router.post('/', async (req, res) => {
   if (!validPassword) return res.status(400).send('Invalid email or password');
 
   req.session.userId = user._id
+  console.log(req.session.userId);
 
   const token = user.generateAuthToken();
   res.send(token);

@@ -12,7 +12,7 @@ const validate = require('../middleware/validate');
 
 router.get('/', async (req, res) => {
 const result = await Document.find();
-console.log(req.sessionID)
+console.log(req.session.userId)
 res.send(result);
 });
 
@@ -25,8 +25,6 @@ res.send(document);
 });
 
 router.post('/', [auth, validate(validateDocument)], async (req, res) => {
-  // const { error } = validate(req.body);
-  // if(error) return res.status(400).send(error.details[0].message);
 
   let document = new Document({
     year: req.body.year,
