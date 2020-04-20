@@ -83,8 +83,8 @@ describe('GET /api/documents', () => {
 
   it('should return all documents related to user', async () => {
     const res = await request(server)
-    .get('/api/documents')
-    .set('x-auth-token', token);
+      .get('/api/documents')
+      .set('x-auth-token', token);
 
     expect(res.status).toBe(200);
     expect(res.body[0]).toHaveProperty('name', "12345");
@@ -142,8 +142,8 @@ describe('GET /api/documents/:id', () => {
 
   it('should return a document if valid id is passed', async () => {
     const res = await request(server)
-    .get('/api/documents/' + document._id)
-    .set('x-auth-token', token);
+      .get('/api/documents/' + document._id)
+      .set('x-auth-token', token);
 
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty('name', "12345");
@@ -152,8 +152,8 @@ describe('GET /api/documents/:id', () => {
   it('should return 404 if invalid id is passed', async () => {
 
     const res = await request(server)
-    .get('/api/documents/1')
-    .set('x-auth-token', token);
+      .get('/api/documents/1')
+      .set('x-auth-token', token);
 
     expect(res.status).toBe(404);
   });
@@ -161,8 +161,8 @@ describe('GET /api/documents/:id', () => {
   it('should return 404 if no document with the given id', async () => {
     const id = mongoose.Types.ObjectId();
     const res = await request(server)
-    .get('/api/documents/' + id)
-    .set('x-auth-token', token);
+      .get('/api/documents/' + id)
+      .set('x-auth-token', token);
 
     expect(res.status).toBe(404);
   });
@@ -172,6 +172,7 @@ describe('POST /', () => {
   let server;
   let token;
   let year;
+  let userTest;
 
   const exec = () => {
     return request(server)
@@ -179,6 +180,7 @@ describe('POST /', () => {
       .set('x-auth-token', token)
       .send({
         name: 'document',
+        userId: userTest._id.toHexString(),
         year: year,
         month: "april",
         SIRET: "12345",
@@ -191,14 +193,23 @@ describe('POST /', () => {
       });
   };
 
-  beforeEach(() => {
+  beforeEach(async () => {
     server = require('../../index');
-    token = new User().generateAuthToken();
+
+    userTest = new User({
+      name: "12345",
+      email: '1234@gmail.com',
+      password: '1234567'
+    });
+    await userTest.save();
+
+    token = userTest.generateAuthToken();
     year = "2020";
   });
 
   afterEach(async () => {
     await Document.remove({});
+    await User.remove({});
     await server.close();
   });
 
@@ -252,6 +263,7 @@ describe('PUT /:id', () => {
   let id;
   let newName;
   let doc;
+  let userTest;
 
   const exec = () => {
     return request(server)
@@ -259,6 +271,7 @@ describe('PUT /:id', () => {
       .set('x-auth-token', token)
       .send({
         name: newName,
+        userId: userTest._id.toHexString(),
         year: year,
         month: '12345',
         SIRET: '12345',
@@ -273,11 +286,20 @@ describe('PUT /:id', () => {
 
   beforeEach(async () => {
     server = require('../../index');
-    token = new User().generateAuthToken();
     year = "2020";
+
+    userTest = new User({
+      name: "12345",
+      email: '1234@gmail.com',
+      password: '1234567'
+    });
+    await userTest.save();
+
+    token = userTest.generateAuthToken();
 
     doc = new Document({
       year: year,
+      userId: userTest._id.toHexString(),
       month: '12345',
       name: '12345',
       SIRET: '12345',
@@ -296,6 +318,7 @@ describe('PUT /:id', () => {
 
   afterEach(async () => {
     await Document.remove({});
+    await User.remove({});
     await server.close();
   });
 
@@ -360,6 +383,7 @@ describe('DELETE /:id', () => {
   let token;
   let id;
   let doc;
+  let userTest;
 
   const exec = () => {
     return request(server)
@@ -370,10 +394,20 @@ describe('DELETE /:id', () => {
 
   beforeEach(async () => {
     server = require('../../index');
-    token = new User().generateAuthToken();
+    year = "2020";
+
+    userTest = new User({
+      name: "12345",
+      email: '1234@gmail.com',
+      password: '1234567'
+    });
+    await userTest.save();
+
+    token = userTest.generateAuthToken();
 
     doc = new Document({
-      year: '2020',
+      year: year,
+      userId: userTest._id.toHexString(),
       month: '12345',
       name: '12345',
       SIRET: '12345',
@@ -391,6 +425,7 @@ describe('DELETE /:id', () => {
 
   afterEach(async () => {
     await Document.remove({});
+    await User.remove({});
     await server.close();
   });
 

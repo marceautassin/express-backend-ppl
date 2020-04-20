@@ -70,7 +70,9 @@ router.put('/:id', [auth, validateObjectId, validate(validateDocument)], async (
 });
 
 router.delete('/:id', [auth, validateObjectId], async (req, res) => {
-  const document = await Document.findByIdAndRemove(req.params.id);
+  const document = await Document.findOneAndRemove({
+    _id: req.params.id,
+  userId: req.userId});
   if (!document) return res.status(404).send('This document does not exist');
 
   res.send(document);
