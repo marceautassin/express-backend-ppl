@@ -56,7 +56,7 @@ const Document = mongoose.model('Document', documentSchema);
 
 const validateDocument = (document) => {
   const schema = {
-    // userId: Joi.string().required(),
+    userId: Joi.string(),
     year: Joi.string().required(),
     month: Joi.string().required(),
     name: Joi.string().required(),
